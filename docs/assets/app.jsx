@@ -2,7 +2,7 @@ const { useEffect, useMemo } = React;
 
 /** ================= Defaults & URL overrides =================
  * THEME: 'medieval' (default) | 'cozy' | 'scifi' | 'aurora' | 'embers' | 'retro'
- * SHOW_CONTROLS: true/false (default true)
+ * SHOW_CONTROLS: true/false (default false)
  * ASPECT_MODE: '16:9' (default) | 'auto'
  */
 const THEME = new URLSearchParams(location.search).get('theme') || 'medieval';
@@ -165,7 +165,7 @@ function App(){
       <Header/>
       <RepoButton/>
       <ParticleLayer/>
-      { (new URLSearchParams(location.search).get('controls') ?? 'true') !== 'false' ? <ControlsPanel/> : null }
+      { (new URLSearchParams(location.search).get('controls') ?? 'false') !== 'true' ? <ControlsPanel/> : null }
 
       <div className="wrap">
         <section className="frame" aria-label="Game frame">
