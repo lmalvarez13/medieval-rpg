@@ -1,23 +1,105 @@
-/* ---------- Requested background moods + extra variants ---------- */
-/* Each theme sets: --bg (page base), --texture, --ambient-gradients, and particle colors (p-color-1..3) */
-
-/* Medieval (default) — wooden style background */
+/* =========================
+   MEDIEVAL — WOODEN (default)
+   Brownish wood panels + cool teal/green “forest spore” particles
+========================= */
 .theme-medieval{
-  --bg: linear-gradient(180deg, #0d0f13, #12161b);
+  /* Page background (brownish wood mood) */
+  --bg: linear-gradient(180deg, #1b130d, #21170f 50%, #14110e 100%);
   --text:#ecf8ff;
   --accent:#a3e635; --accent-2:#f59e0b; --accent-3:#60a5fa; --glow:rgba(163,230,53,.35);
+
+  /* Wood texture (subtle, layered) */
   --texture:
-    radial-gradient(circle at 18% 32%, rgba(255,255,255,0.035), transparent 40%),
-    radial-gradient(circle at 80% 76%, rgba(255,255,255,0.035), transparent 40%),
-    repeating-linear-gradient(6deg, #1b232f 0 28px, #141c29 28px 32px),
-    repeating-linear-gradient(96deg, #1a2230 0 96px, #0f1722 96px 100px);
+    radial-gradient(circle at 18% 32%, rgba(255,255,255,0.04), transparent 40%),
+    radial-gradient(circle at 78% 76%, rgba(255,255,255,0.035), transparent 40%),
+    repeating-linear-gradient(8deg,  #2a1c12 0 24px, #1f160f 24px 26px),
+    repeating-linear-gradient(98deg, #23180f 0 90px, #1a130d 90px 92px);
+
+  /* Warm base glow with a hint of cool at the edges */
   --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(255,183,77,.20), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(255,137,44,.22), transparent 70%);
-  --p-color-1:#baffc9; --p-color-2:#5eead4; --p-color-3:rgba(94,234,212,.7);
+    radial-gradient(60% 60% at 50% 20%, rgba(230,160,80,.22), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(40,120,100,.18), transparent 70%);
+
+  /* Particle palette (cool foresty) */
+  --p-color-1:#8ef0d0; --p-color-2:#6ee7b7; --p-color-3:#3dd6c6;
+
+  /* Particle behavior (theme-level knobs) */
+  --particles-enabled: 1;        /* 0 = off, 1 = on */
+  --sparks-count: 70;            /* # of bright specks */
+  --smoke-count: 24;             /* # of soft puffs */
+  --particle-mode: rise;         /* rise | down | drift | orbit */
+  --particle-size-min: 2;        /* px (sparks baseline) */
+  --particle-size-max: 4;        /* px */
+  --particle-duration-min: 3.5;  /* seconds (faster) */
+  --particle-duration-max: 7.5;  /* seconds (slower) */
 }
 
-/* Sci-fi — neon dark blue */
+/* =========================
+   RETRO — NEON SHINY DARK VIOLET
+   Vibrant neon-violet with electric accents
+========================= */
+.theme-retro{
+  --bg: radial-gradient(120% 120% at 50% 0%, #1e0b2b, #11071e 65%, #0a0714 100%);
+  --text:#eee6ff;
+  --accent:#bf7fff; --accent-2:#8ee1ff; --accent-3:#ff79c6; --glow:rgba(191,127,255,.36);
+
+  --texture:
+    radial-gradient(circle at 25% 35%, rgba(255,255,255,.06), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,.05), transparent 45%),
+    repeating-linear-gradient(45deg, rgba(191,127,255,.08) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(-45deg, rgba(142,225,255,.08) 0 2px, transparent 2px 14px);
+
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(191,127,255,.28), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(255,121,198,.22), transparent 70%);
+
+  /* Neon “pixel” particles with slight drift by default */
+  --p-color-1:#bf7fff; --p-color-2:#8ee1ff; --p-color-3:#ff79c6;
+  --particles-enabled: 1;
+  --sparks-count: 80;
+  --smoke-count: 16;
+  --particle-mode: drift;         /* default drift for retro */
+  --particle-size-min: 2;
+  --particle-size-max: 5;
+  --particle-duration-min: 5.5;   /* a little slower to feel floaty */
+  --particle-duration-max: 10.5;
+}
+
+/* =========================
+   COZY — RELAX (replaces “cabin” with a calmer, not-brown mood)
+   Soft dusk palette; muted teals & warm lamp ambiance
+========================= */
+.theme-cozy{
+  --bg: linear-gradient(180deg, #0f1417, #142026 60%, #0e1518 100%);
+  --text:#f7fafc;
+  --accent:#ffd27d; --accent-2:#bfe3ff; --accent-3:#b2f5ea; --glow:rgba(255,210,125,.35);
+
+  /* Soft “bokeh-ish” dots instead of wood lines */
+  --texture:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05), transparent 40%),
+    radial-gradient(circle at 70% 75%, rgba(255,255,255,0.04), transparent 45%),
+    radial-gradient(circle at 50% 55%, rgba(255,255,255,0.03), transparent 45%);
+
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(255,210,125,.22), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(178,245,234,.18), transparent 70%);
+
+  /* Calm floating motes (warm & pale) */
+  --p-color-1:#ffe8ba; --p-color-2:#fff3d0; --p-color-3:#e2fffb;
+
+  --particles-enabled: 1;
+  --sparks-count: 36;            /* fewer, calmer */
+  --smoke-count: 12;
+  --particle-mode: drift;        /* gentle horizontal drift */
+  --particle-size-min: 3;
+  --particle-size-max: 7;
+  --particle-duration-min: 7;    /* slower */
+  --particle-duration-max: 13;
+}
+
+/* =========================
+   SCI-FI — (unchanged core, shown for reference)
+========================= */
 .theme-scifi{
   --bg: linear-gradient(180deg, #030712, #0a1430);
   --text:#e6f7ff;
@@ -30,94 +112,60 @@
   --ambient-gradients:
     radial-gradient(60% 60% at 50% 20%, rgba(96,165,250,.28), transparent 70%),
     radial-gradient(70% 70% at 50% 100%, rgba(125,211,252,.26), transparent 70%);
+
   --p-color-1:#7dd3fc; --p-color-2:#60a5fa; --p-color-3:#67e8f9;
+  --particles-enabled: 1;
+  --sparks-count: 60;
+  --smoke-count: 20;
+  --particle-mode: rise;
+  --particle-size-min: 2;
+  --particle-size-max: 4.5;
+  --particle-duration-min: 4;
+  --particle-duration-max: 8.5;
 }
 
-/* Neon — shiny neon green */
-.theme-neon{
-  --bg: radial-gradient(120% 120% at 50% 0%, #021006, #071b0c 60%);
-  --text:#e8f7ff;
-  --accent:#22ff88; --accent-2:#aaffcc; --accent-3:#66ffcc; --glow:rgba(34,255,136,.35);
+/* ===== Optional extra variants (add if you want more variety) ===== */
+
+/* Aurora (greens/purples, slow rise) */
+.theme-aurora{
+  --bg: linear-gradient(180deg, #08121a, #0a1822 60%, #060c12 100%);
+  --text:#eaf7ff;
+  --accent:#93f5a9; --accent-2:#b48bff; --accent-3:#79ffe1; --glow:rgba(147,245,169,.32);
   --texture:
-    radial-gradient(circle at 25% 40%, rgba(255,255,255,.06), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,.06), transparent 45%),
-    repeating-linear-gradient(45deg, rgba(34,255,136,.08) 0 2px, transparent 2px 16px),
-    repeating-linear-gradient(-45deg, rgba(102,255,204,.08) 0 2px, transparent 2px 16px);
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,.05), transparent 45%),
+    radial-gradient(circle at 75% 70%, rgba(255,255,255,.04), transparent 45%);
   --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(34,255,136,.28), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(102,255,204,.24), transparent 70%);
-  --p-color-1:#22ff88; --p-color-2:#66ffcc; --p-color-3:#aaffcc;
+    radial-gradient(70% 70% at 50% 100%, rgba(147,245,169,.22), transparent 70%),
+    radial-gradient(60% 60% at 50% 20%, rgba(180,139,255,.20), transparent 70%);
+  --p-color-1:#93f5a9; --p-color-2:#b48bff; --p-color-3:#79ffe1;
+  --particles-enabled: 1;
+  --sparks-count: 50;
+  --smoke-count: 20;
+  --particle-mode: rise;
+  --particle-size-min: 3;
+  --particle-size-max: 6;
+  --particle-duration-min: 6.5;
+  --particle-duration-max: 12;
 }
 
-/* Cozy cabin — cozy (not brown) */
-.theme-cabin{
-  --bg: linear-gradient(180deg, #0e1214, #131a1e);
-  --text:#f7fafc;
-  --accent:#fbbf24; --accent-2:#f472b6; --accent-3:#93c5fd; --glow:rgba(251,191,36,.35);
+/* Embers (charcoal red, ember sparks falling down) */
+.theme-embers{
+  --bg: linear-gradient(180deg, #0f0a0a, #140e10 60%, #0a0708 100%);
+  --text:#ffecec;
+  --accent:#fb7185; --accent-2:#f97316; --accent-3:#fdba74; --glow:rgba(249,115,22,.32);
   --texture:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.04), transparent 40%),
-    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.04), transparent 40%),
-    repeating-linear-gradient(0deg, #172024 0 36px, #11191c 36px 38px),
-    repeating-linear-gradient(90deg, #172024 0 120px, #0f171a 120px 122px);
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,.03), transparent 45%);
   --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(255,200,120,.22), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(255,140,90,.20), transparent 70%);
-  --p-color-1:#ffe9b8; --p-color-2:#ffd591; --p-color-3:rgba(255,195,120,.55);
-}
-
-/* ---- Extra ambient variants ---- */
-
-/* Desert sunset */
-.theme-desert{
-  --bg: linear-gradient(180deg, #2a0f16, #5b1e1a 50%, #0f0c12 100%);
-  --text:#fff6f0;
-  --accent:#f59e0b; --accent-2:#f97316; --accent-3:#fca5a5; --glow:rgba(249,115,22,.35);
-  --texture:
-    radial-gradient(circle at 20% 35%, rgba(255,255,255,.04), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,.04), transparent 45%);
-  --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(252,165,165,.26), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(249,115,22,.28), transparent 70%);
+    radial-gradient(60% 60% at 50% 20%, rgba(249,115,22,.22), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(251,113,133,.18), transparent 70%);
   --p-color-1:#ffd29b; --p-color-2:#ff9966; --p-color-3:#ffc7a6;
-}
-
-/* Ocean deep */
-.theme-ocean{
-  --bg: radial-gradient(120% 120% at 50% 0%, #03121c, #062332 60%);
-  --text:#e7f8ff;
-  --accent:#38bdf8; --accent-2:#22d3ee; --accent-3:#14b8a6; --glow:rgba(56,189,248,.35);
-  --texture:
-    radial-gradient(circle at 20% 40%, rgba(255,255,255,.04), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,.04), transparent 45%);
-  --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(34,211,238,.26), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(20,184,166,.26), transparent 70%);
-  --p-color-1:#7dd3fc; --p-color-2:#22d3ee; --p-color-3:#14b8a6;
-}
-
-/* Vaporwave */
-.theme-vapor{
-  --bg: linear-gradient(180deg, #1a1035, #270f3b 50%, #0d0b1a 100%);
-  --text:#f4e8ff;
-  --accent:#a78bfa; --accent-2:#f472b6; --accent-3:#60a5fa; --glow:rgba(167,139,250,.38);
-  --texture:
-    radial-gradient(circle at 25% 30%, rgba(255,255,255,.06), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,.06), transparent 40%);
-  --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(244,114,182,.28), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(96,165,250,.24), transparent 70%);
-  --p-color-1:#a78bfa; --p-color-2:#f472b6; --p-color-3:#60a5fa;
-}
-
-/* Retro CRT */
-.theme-retro{
-  --bg: radial-gradient(100% 120% at 50% 0%, #0d120f, #0b100e 70%);
-  --text:#eafff4;
-  --accent:#34d399; --accent-2:#f97316; --accent-3:#a3e635; --glow:rgba(52,211,153,.35);
-  --texture:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 4px);
-  --ambient-gradients:
-    radial-gradient(60% 60% at 50% 20%, rgba(52,211,153,.22), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, rgba(249,115,22,.18), transparent 70%);
-  --p-color-1:#34d399; --p-color-2:#a3e635; --p-color-3:#f97316;
+  --particles-enabled: 1;
+  --sparks-count: 55;
+  --smoke-count: 10;
+  --particle-mode: down;          /* note: falling embers */
+  --particle-size-min: 2.5;
+  --particle-size-max: 5.5;
+  --particle-duration-min: 5.5;
+  --particle-duration-max: 9.5;
 }

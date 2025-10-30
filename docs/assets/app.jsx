@@ -6,7 +6,7 @@ const { useEffect, useMemo } = React;
  * ASPECT_MODE: '16:9' (default) | 'auto'
  */
 const THEME = new URLSearchParams(location.search).get('theme') || 'medieval';
-const SHOW_CONTROLS = (new URLSearchParams(location.search).get('controls') ?? 'true') !== 'false';
+const SHOW_CONTROLS = (new URLSearchParams(location.search).get('controls') ?? 'false') !== 'true';
 const ASPECT_MODE = new URLSearchParams(location.search).get('aspect') || '16:9'; // default changed to 16:9
 
 function applyTheme(theme){
@@ -55,57 +55,79 @@ function useUnity(){
     // New loader snippet available if needed.
   }, []);
 }
-
 function ParticleLayer(){
-  const sparks = 70, smokes = 28;
-  const sparkEls = useMemo(() => Array.from({length:sparks}), []);
-  const smokeEls = useMemo(() => Array.from({length:smokes}), []);
   const css = getComputedStyle(document.body);
+  const enabled = (css.getPropertyValue('--particles-enabled') || '1').trim() !== '0';
+
+  if (!enabled) return (
+    <div className="ambient-glow" aria-hidden="true"></div>
+  );
+
+  const sparksCount = parseInt(css.getPropertyValue('--sparks-count')) || 70;
+  const smokeCount  = parseInt(css.getPropertyValue('--smoke-count'))  || 24;
+
+  const sizeMin = parseFloat(css.getPropertyValue('--particle-size-min')) || 2;
+  const sizeMax = parseFloat(css.getPropertyValue('--particle-size-max')) || 4;
+  const durMin  = parseFloat(css.getPropertyValue('--particle-duration-min')) || 3.5;
+  const durMax  = parseFloat(css.getPropertyValue('--particle-duration-max')) || 7.5;
+
+  const mode = (css.getPropertyValue('--particle-mode') || 'rise').trim();
+  const animationName = mode === 'down' ? 'fallDown' :
+                        mode === 'drift' ? 'driftSide' :
+                        mode === 'orbit' ? 'orbit' : 'riseGeneric';
+
   const colors = [
-    css.getPropertyValue('--p-color-1') || '#5eead4',
-    css.getPropertyValue('--p-color-2') || '#a78bfa',
-    css.getPropertyValue('--p-color-3') || '#34d399'
+    (css.getPropertyValue('--p-color-1') || '#5eead4').trim(),
+    (css.getPropertyValue('--p-color-2') || '#a78bfa').trim(),
+    (css.getPropertyValue('--p-color-3') || '#34d399').trim()
   ];
 
-  const sRand = () => (Math.random()*100).toFixed(2) + '%';
-  const vw = (v)=> v.toFixed(2)+'vw';
+  const rand = (a,b)=> Math.random()*(b-a)+a;
+  const randPx = (a,b)=> (rand(a,b)).toFixed(1) + 'px';
+  const randSec = (a,b)=> (rand(a,b)).toFixed(2) + 's';
+  const randVw = (a,b)=> (rand(a,b)).toFixed(2) + 'vw';
+  const pct = ()=> (Math.random()*100).toFixed(2) + '%';
+
+  const sparks = Array.from({length:sparksCount}).map((_,i)=>{
+    const size = randPx(sizeMin, sizeMax);
+    const color = colors[i % 3];
+    const driftX = randVw(-25, 25);
+    const driftY = randVw(-8, 8);  // used for orbit mode
+    return {
+      left: pct(),
+      width: size, height: size,
+      animationName,
+      animationDuration: randSec(durMin, durMax),
+      animationDelay: (-Math.random()*durMax).toFixed(2) + 's',
+      '--sx': driftX, '--sy': driftY,
+      background: `radial-gradient(circle, ${color} 0%, rgba(255,255,255,0) 70%)`,
+      boxShadow: `0 0 14px ${color}`
+    };
+  });
+
+  const smokes = Array.from({length:smokeCount}).map(()=>{
+    const size = randPx(sizeMin+4, sizeMax+10);
+    const driftX = randVw(-15, 15);
+    const driftY = randVw(-10, 10);
+    return {
+      left: pct(),
+      width: size, height: size,
+      animationName,
+      animationDuration: randSec(durMin+2, durMax+4),
+      animationDelay: (-Math.random()*durMax).toFixed(2) + 's',
+      '--sx': driftX, '--sy': driftY,
+      background:'radial-gradient(circle, rgba(215,225,235,.25) 0%, rgba(160,170,180,.10) 60%, rgba(120,130,140,0) 70%)',
+      filter:'blur(2px)'
+    };
+  });
 
   return (
     <>
       <div className="layer">
-        {sparkEls.map((_,i)=>{
-          const dur = (Math.random()*4 + 3.5).toFixed(2) + 's';
-          const delay = (-Math.random()*7).toFixed(2) + 's';
-          const drift = vw(Math.random()*50 - 25);
-          const size = (Math.random()*2 + 2).toFixed(1) + 'px';
-          const color = colors[i%3].trim();
-          const style = {
-            left:sRand(),
-            width:size, height:size,
-            animationName:'riseGeneric', animationDuration:dur, animationDelay:delay,
-            '--sx': drift,
-            background:`radial-gradient(circle, ${color} 0%, rgba(255,255,255,0) 70%)`,
-            boxShadow:`0 0 14px ${color}`
-          };
-          return <div key={'s'+i} className="p" style={style}/>;
-        })}
+        {sparks.map((style, idx)=><div key={'s'+idx} className="p" style={style}/>)}
       </div>
       <div className="layer">
-        {smokeEls.map((_,i)=>{
-          const dur = (Math.random()*5 + 6).toFixed(2) + 's';
-          const delay = (-Math.random()*10).toFixed(2) + 's';
-          const drift = vw(Math.random()*30 - 15);
-          const size = (Math.random()*10 + 8).toFixed(1) + 'px';
-          const style = {
-            left:sRand(),
-            width:size, height:size,
-            animationName:'riseGeneric', animationDuration:dur, animationDelay:delay,
-            '--sx': drift,
-            background:'radial-gradient(circle, rgba(210,220,230,.22) 0%, rgba(160,170,180,.10) 60%, rgba(120,130,140,0) 70%)',
-            filter:'blur(2px)'
-          };
-          return <div key={'m'+i} className="p" style={style}/>;
-        })}
+        {smokes.map((style, idx)=><div key={'m'+idx} className="p" style={style}/>)}
       </div>
       <div className="ambient-glow" aria-hidden="true"></div>
     </>
@@ -157,7 +179,7 @@ function App(){
               </button>
             </div>
           </div>
-          <div className="title" id="game-title">Your Game Title — Unity WebGL</div>
+          <div className="title" id="game-title">Medieval RPG | Unity Engine</div>
         </section>
       </div>
     </>
