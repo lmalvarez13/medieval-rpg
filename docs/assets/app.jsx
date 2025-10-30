@@ -1,7 +1,7 @@
 const { useEffect, useMemo } = React;
 
 /** ================= Defaults & URL overrides =================
- * THEME: 'medieval' (default) | 'cabin' | 'neon' | 'scifi' | 'desert' | 'ocean' | 'vapor' | 'retro'
+ * THEME: 'medieval' (default) | 'cozy' | 'scifi' | 'aurora' | 'embers' | 'retro'
  * SHOW_CONTROLS: true/false (default true)
  * ASPECT_MODE: '16:9' (default) | 'auto'
  */
@@ -10,9 +10,9 @@ const SHOW_CONTROLS = (new URLSearchParams(location.search).get('controls') ?? '
 const ASPECT_MODE = new URLSearchParams(location.search).get('aspect') || '16:9'; // default changed to 16:9
 
 function applyTheme(theme){
-  const map = { medieval:'theme-medieval', cabin:'theme-cabin', neon:'theme-neon', scifi:'theme-scifi', desert:'theme-desert', ocean:'theme-ocean', vapor:'theme-vapor', retro:'theme-retro' };
+  const map = { medieval:'theme-medieval', cozy:'theme-cozy', scifi:'theme-scifi', aurora:'theme-aurora', embers:'theme-embers', retro:'theme-retro' };
   const cls = map[theme] || map.medieval;
-  document.body.classList.remove('theme-medieval','theme-cabin','theme-neon','theme-scifi','theme-desert','theme-ocean','theme-vapor','theme-retro');
+  document.body.classList.remove('theme-medieval','theme-cozy','theme-scifi','theme-aurora','theme-embers','theme-retro');
   document.body.classList.add(cls);
 }
 
@@ -186,5 +186,8 @@ function App(){
   );
 }
 
+//const root = ReactDOM.createRoot(document.getElementById("root"));
+//root.render(<App/>);
+applyTheme(THEME); // apply ASAP so URL override wins deterministically
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App/>);
