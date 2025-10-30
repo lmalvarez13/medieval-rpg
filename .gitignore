@@ -88,3 +88,4 @@ RPG_Project/.gradle/
 *.tar
 *.tar.gz
 *.7z
+/docs/_backup

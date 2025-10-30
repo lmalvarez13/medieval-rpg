@@ -1,0 +1,56 @@
+/* ---------- Theme variants ---------- */
+.theme-medieval{
+  --bg-1:#0d1117; --bg-2:#111827; --text:#ecf8ff;
+  --accent:#a3e635; --accent-2:#f59e0b; --accent-3:#60a5fa; --glow:rgba(163,230,53,.35);
+  --texture:
+    radial-gradient(circle at 18% 32%, rgba(255,255,255,0.035), transparent 40%),
+    radial-gradient(circle at 80% 76%, rgba(255,255,255,0.035), transparent 40%),
+    repeating-linear-gradient(6deg, #1c2432 0 28px, #141c29 28px 32px),
+    repeating-linear-gradient(96deg, #161e2b 0 96px, #0f1722 96px 100px);
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(255,183,77,.22), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(255,137,44,.28), transparent 70%);
+  --p-color-1:#baffc9; --p-color-2:#5eead4; --p-color-3:rgba(94,234,212,.6);
+}
+
+.theme-cabin{
+  --bg-1:#0e1214; --bg-2:#0b1012; --text:#f7fafc;
+  --accent:#fbbf24; --accent-2:#f472b6; --accent-3:#93c5fd; --glow:rgba(251,191,36,.35);
+  --texture:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.03), transparent 40%),
+    repeating-linear-gradient(0deg, #1b2422 0 36px, #151d1b 36px 38px),
+    repeating-linear-gradient(90deg, #1b2422 0 120px, #121917 120px 122px);
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(255,200,120,.22), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(255,140,90,.26), transparent 70%);
+  --p-color-1:#ffe9b8; --p-color-2:#ffd591; --p-color-3:rgba(255,195,120,.55);
+}
+
+.theme-neon{
+  --bg-1:#0a0a1a; --bg-2:#0b0f25; --text:#e8f7ff;
+  --accent:#22d3ee; --accent-2:#a78bfa; --accent-3:#34d399; --glow:rgba(52,211,153,.4);
+  --texture:
+    radial-gradient(circle at 25% 40%, rgba(255,255,255,.05), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,.05), transparent 45%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.04) 0 2px, transparent 2px 16px);
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(56,189,248,.28), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(167,139,250,.28), transparent 70%);
+  --p-color-1:#22d3ee; --p-color-2:#a78bfa; --p-color-3:#34d399;
+}
+
+.theme-scifi{
+  --bg-1:#030712; --bg-2:#0b1320; --text:#e6f7ff;
+  --accent:#7dd3fc; --accent-2:#60a5fa; --accent-3:#67e8f9; --glow:rgba(103,232,249,.4);
+  --texture:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.045), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,.045), transparent 45%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 10px);
+  --ambient-gradients:
+    radial-gradient(60% 60% at 50% 20%, rgba(96,165,250,.28), transparent 70%),
+    radial-gradient(70% 70% at 50% 100%, rgba(125,211,252,.26), transparent 70%);
+  --p-color-1:#7dd3fc; --p-color-2:#60a5fa; --p-color-3:#67e8f9;
+}

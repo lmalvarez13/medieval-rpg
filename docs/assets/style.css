@@ -1,4 +1,4 @@
-/* ---------- Theme (cheerful palette) ---------- */
+/* ---------- Base layout & cheerful defaults ---------- */
 :root{
   --bg-1: #0b0f1a;
   --bg-2: #101827;
@@ -11,6 +11,7 @@
   --glass: rgba(255,255,255,0.06);
   --glass-2: rgba(255,255,255,0.14);
   --glow: rgba(94,234,212,0.35);
+  --glow-strong: rgba(94,234,212,0.6);
 }
 
 *{box-sizing:border-box}
@@ -19,7 +20,7 @@ body{
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   color:var(--text);
   background:
-    radial-gradient(120% 140% at 50% 0%, #0e1630 0%, #070b15 60%),
+    radial-gradient(120% 140% at 50% 0%, var(--bg-1) 0%, var(--bg-2) 60%),
     linear-gradient(180deg, var(--bg-1), var(--bg-2));
   overflow-x:hidden;
 }
@@ -27,23 +28,19 @@ body{
 body::before{
   content:"";
   position:fixed; inset:0; z-index:-2;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03), transparent 40%),
-    repeating-radial-gradient(circle at 50% 100%,
-      var(--tile-1) 0 22px, var(--tile-2) 22px 44px);
-  mix-blend-mode:normal;
-  opacity:.6;
-  filter: contrast(1.05) brightness(.9);
+  background: var(--texture, none);
+  opacity: var(--texture-opacity, .6);
+  filter: var(--texture-filter, contrast(1.05) brightness(.95));
+  mix-blend-mode: normal;
 }
 
-.fire-glow{
+.ambient-glow{
   position:fixed; left:0; right:0; bottom:-10vh; height:40vh; z-index:-1;
-  background:
+  background: var(--ambient-gradients,
     radial-gradient(60% 60% at 50% 20%, rgba(255,145,77,.25), transparent 70%),
     radial-gradient(70% 70% at 50% 100%, rgba(255,78,42,.35), transparent 70%),
-    radial-gradient(90% 80% at 50% 100%, rgba(232,121,48,.28), transparent 75%);
-  filter: blur(20px) saturate(1.1);
+    radial-gradient(90% 80% at 50% 100%, rgba(232,121,48,.28), transparent 75%));
+  filter: blur(20px) saturate(1.05);
   pointer-events:none;
 }
 
@@ -71,17 +68,20 @@ body::before{
   box-shadow: 0 10px 45px rgba(0,0,0,.55), 0 0 80px rgba(96,165,250,.10);
   overflow:hidden;
 }
+
+/* Aspect handling */
 .play{
-  position:relative; width:100%; aspect-ratio:16/9; max-height:calc(100vh - 220px);
+  position:relative; width:100%; max-height:calc(100vh - 220px);
   background: radial-gradient(70% 80% at 50% 45%, rgba(9,13,24,.9), rgba(5,8,14,.96));
   border-top-left-radius:22px; border-top-right-radius:22px;
   border-bottom:1px solid var(--glass);
   overflow:hidden;
 }
-.play::before{ content:""; display:block; padding-top:56.25% }
+.play.fixed169{ aspect-ratio:16/9; }
+.play.fixed169::before{ content:""; display:block; padding-top:56.25% }
 
-.stage{ position:absolute; inset:0; display:grid; place-items:center; }
-#gameContainer{ width:100%; height:100%; outline:none }
+.stage{ position:absolute; inset:0; display:grid; grid-template-columns: 1fr auto; gap:12px; align-items:stretch; }
+#gameContainer{ width:100%; height:100%; outline:none; }
 
 .fsBtn{
   position:absolute; right:10px; bottom:10px; z-index:5;
@@ -93,39 +93,39 @@ body::before{
 }
 .fsBtn:hover{ border-color:var(--accent-3) }
 
+.controls{
+  width:240px; max-width:36vw;
+  margin:10px; padding:12px;
+  border:1px solid var(--glass-2);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-radius:14px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset, 0 8px 20px rgba(0,0,0,.35);
+  font-size: 14px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.controls h3{ margin:0 0 6px 0; font-size:13px; opacity:.95; letter-spacing:.4px; }
+.controls .row{ display:flex; align-items:center; gap:8px; opacity:.92; }
+.k{ font-weight:700; padding:2px 8px; border-radius:8px; border:1px solid var(--glass-2);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
+
 .title{
   margin:12px auto 16px; text-align:center; font-weight:700; letter-spacing:.3px;
   color:var(--text); text-shadow:0 0 14px rgba(96,165,250,.25);
 }
 
-.fireField, .smokeField{
-  position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden;
-}
-.spark, .smoke{
-  position:absolute; bottom:-20px; border-radius:50%;
-  will-change: transform, opacity;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-.spark{ width:3px; height:3px;
-  background: radial-gradient(circle, #ffd29b 0%, #ff6a00 60%, rgba(255,0,0,.65) 100%);
-  box-shadow: 0 0 10px rgba(255,150,80,.7), 0 0 22px rgba(255,90,30,.35);
-  filter: blur(.2px);
-}
-@keyframes rise {
+.layer{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
+.p{ position:absolute; bottom:-20px; border-radius:50%; will-change: transform, opacity; animation-timing-function: linear; animation-iteration-count: infinite; }
+
+@keyframes riseGeneric {
   0%   { transform: translateY(0) translateX(0) scale(1); opacity:0 }
-  10%  { opacity:1 }
-  60%  { opacity:.9 }
+  15%  { opacity:1 }
+  70%  { opacity:.85 }
   100% { transform: translateY(-70vh) translateX(var(--sx, 0)) scale(.9); opacity:0 }
 }
-.smoke{ width:10px; height:10px; background: radial-gradient(circle, rgba(200,210,220,.25) 0%, rgba(180,190,200,.12) 60%, rgba(120,130,140,0) 70%);
-  filter: blur(2px);
-}
-@keyframes driftUp {
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity:0 }
-  15%  { opacity:.25 }
-  60%  { opacity:.15 }
-  100% { transform: translateY(-50vh) translateX(var(--sx, 0)) scale(1.6); opacity:0 }
+
+@media (max-width:900px){
+  .stage{ grid-template-columns: 1fr; }
+  .controls{ position:absolute; right:10px; top:10px; width:200px; }
 }
 
 @media (max-width:640px){

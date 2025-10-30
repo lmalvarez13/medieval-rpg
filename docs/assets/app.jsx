@@ -1,5 +1,16 @@
 const { useEffect, useMemo } = React;
 
+const THEME = (new URLSearchParams(location.search).get('theme') || 'medieval');
+const SHOW_CONTROLS = (new URLSearchParams(location.search).get('controls') ?? 'true') !== 'false';
+const ASPECT_MODE = (new URLSearchParams(location.search).get('aspect') || 'auto'); // 'auto' or '16:9'
+
+function applyTheme(theme){
+  const map = { medieval:'theme-medieval', cabin:'theme-cabin', neon:'theme-neon', scifi:'theme-scifi' };
+  const cls = map[theme] || map.medieval;
+  document.body.classList.remove('theme-medieval','theme-cabin','theme-neon','theme-scifi');
+  document.body.classList.add(cls);
+}
+
 function BackButton(){
   return (
     <a className="btn" href="https://lmalvarez13.github.io/" aria-label="Go back">
@@ -27,57 +38,80 @@ function Header(){
   );
 }
 
-function FullscreenButton({ onClick }){
-  return (
-    <button className="fsBtn" title="Fullscreen" onClick={onClick}>
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-        <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm12 0h-2v3h-3v2h5v-5zM7 7h3V5H5v5h2V7zm7-2v2h3v3h2V5h-5z"/>
-      </svg>
-    </button>
-  );
-}
-
 function useUnity(){
   useEffect(() => {
+    applyTheme(THEME);
     if (window.UnityLoader && !window.gameInstance) {
       try {
         window.gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json", { onProgress: window.UnityProgress });
       } catch(e){ console.warn("UnityLoader failed", e); }
     }
-    // Newer createUnityInstance flow available below if needed.
   }, []);
 }
 
-function FireField({ sparks=70, smoke=28 }){
-  const sparkEls = useMemo(() => Array.from({length:sparks}), [sparks]);
-  const smokeEls = useMemo(() => Array.from({length:smoke}), [smoke]);
+function ParticleLayer(){
+  const sparks = 70, smokes = 28;
   const rand = (min, max) => Math.random() * (max - min) + min;
+  const sparkEls = useMemo(() => Array.from({length:sparks}), []);
+  const smokeEls = useMemo(() => Array.from({length:smokes}), []);
+
+  const getVar = (name, fallback) => getComputedStyle(document.body).getPropertyValue(name) || fallback;
+
+  const sparkStyle = (i)=>{
+    const left = (Math.random()*100).toFixed(2) + '%';
+    const dur = (Math.random()*4 + 3.5).toFixed(2) + 's';
+    const delay = (-Math.random()*7).toFixed(2) + 's';
+    const drift = (Math.random()*50 - 25).toFixed(2) + 'vw';
+    const size = (Math.random()*2 + 2).toFixed(1) + 'px';
+    const colors = [getVar('--p-color-1','#5eead4'), getVar('--p-color-2','#a78bfa'), getVar('--p-color-3','#34d399')];
+    const colorStop = colors[i%3];
+    return {
+      left, width:size, height:size,
+      animationName:'riseGeneric',
+      animationDuration:dur, animationDelay:delay,
+      '--sx': drift,
+      background:`radial-gradient(circle, ${colorStop} 0%, rgba(255,255,255,.0) 70%)`,
+      boxShadow:`0 0 14px ${colorStop.trim()}`
+    };
+  };
+
+  const smokeStyle = ()=>{
+    const left = (Math.random()*100).toFixed(2) + '%';
+    const size = (Math.random()*10 + 8).toFixed(1) + 'px';
+    const dur = (Math.random()*5 + 6).toFixed(2) + 's';
+    const delay = (-Math.random()*10).toFixed(2) + 's';
+    const drift = (Math.random()*30 - 15).toFixed(2) + 'vw';
+    return {
+      left, width:size, height:size,
+      animationName:'riseGeneric', animationDuration:dur, animationDelay:delay,
+      '--sx': drift,
+      background:'radial-gradient(circle, rgba(210,220,230,.22) 0%, rgba(160,170,180,.10) 60%, rgba(120,130,140,0) 70%)',
+      filter:'blur(2px)'
+    };
+  };
 
   return (
     <>
-      <div className="fireField">
-        {sparkEls.map((_, i) => {
-          const left = rand(0, 100).toFixed(2) + "%";
-          const dur = rand(3.5, 7.5).toFixed(2) + "s";
-          const delay = (-rand(0, 7)).toFixed(2) + "s";
-          const drift = rand(-25, 25).toFixed(2) + "vw";
-          const style = { left, animationDuration: dur, animationDelay: delay, animationName: "rise", "--sx": drift };
-          return <div key={"s"+i} className="spark" style={style}/>;
-        })}
+      <div className="layer">
+        {sparkEls.map((_,i)=><div key={'s'+i} className="p" style={sparkStyle(i)} />)}
       </div>
-      <div className="smokeField">
-        {smokeEls.map((_, i) => {
-          const left = rand(0, 100).toFixed(2) + "%";
-          const size = rand(8, 18).toFixed(1) + "px";
-          const dur = rand(6, 11).toFixed(2) + "s";
-          const delay = (-rand(0, 10)).toFixed(2) + "s";
-          const drift = rand(-15, 15).toFixed(2) + "vw";
-          const style = { left, width:size, height:size, animationDuration: dur, animationDelay: delay, animationName:"driftUp", "--sx": drift };
-          return <div key={"m"+i} className="smoke" style={style}/>;
-        })}
+      <div className="layer">
+        {smokeEls.map((_,i)=><div key={'m'+i} className="p" style={smokeStyle()} />)}
       </div>
-      <div className="fire-glow" aria-hidden="true"></div>
+      <div className="ambient-glow" aria-hidden="true"></div>
     </>
+  );
+}
+
+function ControlsPanel(){
+  return (
+    <aside className="controls" role="complementary" aria-label="Controls">
+      <h3>Controls</h3>
+      <div className="row"><span className="k">WASD</span> Move</div>
+      <div className="row"><span className="k">Mouse</span> Look / Aim</div>
+      <div className="row"><span className="k">Space</span> Jump / Interact</div>
+      <div className="row"><span className="k">F</span> Fullscreen</div>
+    </aside>
   );
 }
 
@@ -93,17 +127,25 @@ function App(){
     }
   };
 
+  const playClass = "play" + (ASPECT_MODE === '16:9' ? " fixed169" : "");
+
   return (
     <>
       <Header/>
       <RepoButton/>
-      <FireField/>
+      <ParticleLayer/>
+
       <div className="wrap">
         <section className="frame" aria-label="Game frame">
-          <div className="play">
+          <div className={playClass}>
             <div className="stage">
               <div id="gameContainer" tabIndex={0} aria-label="Unity WebGL Canvas"></div>
-              <FullscreenButton onClick={goFullscreen}/>
+              {SHOW_CONTROLS ? <ControlsPanel/> : null}
+              <button className="fsBtn" title="Fullscreen" onClick={goFullscreen}>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm12 0h-2v3h-3v2h5v-5zM7 7h3V5H5v5h2V7zm7-2v2h3v3h2V5h-5z"/>
+                </svg>
+              </button>
             </div>
           </div>
           <div className="title" id="game-title">Your Game Title — Unity WebGL</div>
