@@ -1,46 +1,168 @@
+const { useEffect, useMemo } = React;
 
-const { useEffect } = React;
+/** ================= Defaults & URL overrides =================
+ * THEME: 'medieval' (default) | 'cabin' | 'neon' | 'scifi' | 'desert' | 'ocean' | 'vapor' | 'retro'
+ * SHOW_CONTROLS: true/false (default true)
+ * ASPECT_MODE: '16:9' (default) | 'auto'
+ */
+const THEME = new URLSearchParams(location.search).get('theme') || 'medieval';
+const SHOW_CONTROLS = (new URLSearchParams(location.search).get('controls') ?? 'true') !== 'false';
+const ASPECT_MODE = new URLSearchParams(location.search).get('aspect') || '16:9'; // default changed to 16:9
 
-function ParticleLayer({ count = 80 }) {
-  useEffect(() => {
-    const container = document.getElementById("root");
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement("div");
-      p.className = "particle";
-      p.style.left = Math.random() * 100 + "vw";
-      p.style.animationDelay = Math.random() * 5 + "s";
-      p.style.opacity = Math.random();
-      container.appendChild(p);
-    }
-  }, [count]);
-  return null;
+function applyTheme(theme){
+  const map = { medieval:'theme-medieval', cabin:'theme-cabin', neon:'theme-neon', scifi:'theme-scifi', desert:'theme-desert', ocean:'theme-ocean', vapor:'theme-vapor', retro:'theme-retro' };
+  const cls = map[theme] || map.medieval;
+  document.body.classList.remove('theme-medieval','theme-cabin','theme-neon','theme-scifi','theme-desert','theme-ocean','theme-vapor','theme-retro');
+  document.body.classList.add(cls);
 }
 
-function App() {
-  useEffect(() => {
-    UnityLoader.instantiate("gameContainer", "Build/WebGL.json", {
-      onProgress: UnityProgress,
-    });
-  }, []);
-
+function BackButton(){
   return (
-    <div className="frame-container">
-      <div id="gameContainer" className="play auto-aspect"></div>
-      <div className="controls-panel">
-        <strong>Controls</strong><br/>
-        - Arrow Keys<br/>
-        - Z to Jump<br/>
-        - X to Attack
-      </div>
-      <a className="btn backBtn" href="https://lmalvarez13.github.io/">← Go back</a>
-      <a className="btn repoBtn" href="https://github.com/lmalvarez13">See this game's repository</a>
-      <button className="btn fullscreenBtn" onClick={() => {
-        const game = document.getElementById('gameContainer').children[0];
-        if (game && game.SetFullscreen) game.SetFullscreen(1);
-      }} />
-      <ParticleLayer count={60} />
+    <a className="btn" href="https://lmalvarez13.github.io/" aria-label="Go back">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      <span>Go back</span>
+    </a>
+  );
+}
+
+function RepoButton(){
+  return (
+    <a className="btn repoBtn" href="https://github.com/lmalvarez13" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.71-2.78.61-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.02 1.53 1.02 .9 1.54 2.36 1.1 2.94.84 .09-.65.35-1.1.63-1.35 -2.22-.25-4.56-1.11-4.56-4.93 0-1.09.39-1.99 1.02-2.69 -.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02 .55 1.38.2 2.4.1 2.65 .63.7 1.02 1.6 1.02 2.69 0 3.83-2.35 4.67-4.58 4.92 .36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+      <span>See this game's repository!</span>
+    </a>
+  );
+}
+
+function Header(){
+  return (
+    <div className="header">
+      <BackButton/>
+      <div></div>
     </div>
   );
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+function useUnity(){
+  useEffect(() => {
+    applyTheme(THEME);
+    // Classic UnityLoader.js
+    if (window.UnityLoader && !window.gameInstance) {
+      try {
+        window.gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json", { onProgress: window.UnityProgress });
+      } catch(e){ console.warn("UnityLoader failed", e); }
+    }
+    // New loader snippet available if needed.
+  }, []);
+}
+
+function ParticleLayer(){
+  const sparks = 70, smokes = 28;
+  const sparkEls = useMemo(() => Array.from({length:sparks}), []);
+  const smokeEls = useMemo(() => Array.from({length:smokes}), []);
+  const css = getComputedStyle(document.body);
+  const colors = [
+    css.getPropertyValue('--p-color-1') || '#5eead4',
+    css.getPropertyValue('--p-color-2') || '#a78bfa',
+    css.getPropertyValue('--p-color-3') || '#34d399'
+  ];
+
+  const sRand = () => (Math.random()*100).toFixed(2) + '%';
+  const vw = (v)=> v.toFixed(2)+'vw';
+
+  return (
+    <>
+      <div className="layer">
+        {sparkEls.map((_,i)=>{
+          const dur = (Math.random()*4 + 3.5).toFixed(2) + 's';
+          const delay = (-Math.random()*7).toFixed(2) + 's';
+          const drift = vw(Math.random()*50 - 25);
+          const size = (Math.random()*2 + 2).toFixed(1) + 'px';
+          const color = colors[i%3].trim();
+          const style = {
+            left:sRand(),
+            width:size, height:size,
+            animationName:'riseGeneric', animationDuration:dur, animationDelay:delay,
+            '--sx': drift,
+            background:`radial-gradient(circle, ${color} 0%, rgba(255,255,255,0) 70%)`,
+            boxShadow:`0 0 14px ${color}`
+          };
+          return <div key={'s'+i} className="p" style={style}/>;
+        })}
+      </div>
+      <div className="layer">
+        {smokeEls.map((_,i)=>{
+          const dur = (Math.random()*5 + 6).toFixed(2) + 's';
+          const delay = (-Math.random()*10).toFixed(2) + 's';
+          const drift = vw(Math.random()*30 - 15);
+          const size = (Math.random()*10 + 8).toFixed(1) + 'px';
+          const style = {
+            left:sRand(),
+            width:size, height:size,
+            animationName:'riseGeneric', animationDuration:dur, animationDelay:delay,
+            '--sx': drift,
+            background:'radial-gradient(circle, rgba(210,220,230,.22) 0%, rgba(160,170,180,.10) 60%, rgba(120,130,140,0) 70%)',
+            filter:'blur(2px)'
+          };
+          return <div key={'m'+i} className="p" style={style}/>;
+        })}
+      </div>
+      <div className="ambient-glow" aria-hidden="true"></div>
+    </>
+  );
+}
+
+function ControlsPanel(){
+  return (
+    <aside className="controls-fixed" role="complementary" aria-label="Controls">
+      <h3>Controls</h3>
+      <div className="row"><span className="k">WASD</span> Move</div>
+      <div className="row"><span className="k">Mouse</span> Look / Aim</div>
+      <div className="row"><span className="k">Space</span> Jump / Interact</div>
+      <div className="row"><span className="k">F</span> Fullscreen</div>
+    </aside>
+  );
+}
+
+function App(){
+  useUnity();
+
+  const goFullscreen = () => {
+    const gi = window.gameInstance;
+    if (gi && gi.SetFullscreen) gi.SetFullscreen(1);
+    else {
+      const el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || el.mozRequestFullScreen)?.call(el);
+    }
+  };
+
+  const playClass = "play " + (ASPECT_MODE === '16:9' ? "fixed169" : "auto");
+
+  return (
+    <>
+      <Header/>
+      <RepoButton/>
+      <ParticleLayer/>
+      { (new URLSearchParams(location.search).get('controls') ?? 'true') !== 'false' ? <ControlsPanel/> : null }
+
+      <div className="wrap">
+        <section className="frame" aria-label="Game frame">
+          <div className={playClass}>
+            <div className="stage">
+              <div id="gameContainer" tabIndex={0} aria-label="Unity WebGL Canvas"></div>
+              <button className="fsBtn" title="Fullscreen" onClick={goFullscreen}>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm12 0h-2v3h-3v2h5v-5zM7 7h3V5H5v5h2V7zm7-2v2h3v3h2V5h-5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div className="title" id="game-title">Your Game Title — Unity WebGL</div>
+        </section>
+      </div>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
