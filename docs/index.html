@@ -1,33 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Medieval RPG | Unity Engine</title>
-
-  <!-- Unity classic template assets (keep these relative paths if present) -->
-  <link rel="shortcut icon" href="TemplateData/favicon.ico" />
-  <script src="TemplateData/UnityProgress.js"></script>
-  <script src="Build/UnityLoader.js"></script>
-
-  <!-- React & Babel (no bundler needed) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="assets/style.css">
-  <link rel="stylesheet" href="assets/themes.css">
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/themes.css" />
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
-<body class="theme-medieval">
-  <!-- ^^^ set the theme class here (theme-medieval | theme-cabin | theme-neon | theme-scifi) -->
+<body class="theme-medieval default-aspect default-controls">
   <div id="root"></div>
-
-  <!-- App -->
-  <script type="text/babel" data-type="module" src="assets/app.jsx"></script>
-
-  <!-- Optional: If your Unity build is the newer style, include loader here instead of UnityLoader.js
-  <script src="Build/build.loader.js"></script>
-  -->
+  <script type="text/babel" src="assets/app.jsx"></script>
 </body>
 </html>
