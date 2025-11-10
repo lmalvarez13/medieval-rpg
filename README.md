@@ -1,4 +1,11 @@
 # Medieval RPG 
+![Engine](https://img.shields.io/badge/Engine-UnityEngine-black)
+![C#](https://img.shields.io/badge/Language-CSharp-green)
+
+Try the game live here:
+🎮 [**Play Medieval RPG on Web**](https://lmalvarez13.github.io/medieval-rpg/)
+
+
 ## About this project
 This project is an RPG Diablo-like game where the player will have to combat grumpy enemies who took a whole town as prisioners.
 
