@@ -5,6 +5,9 @@
 Try the game live here:
 🎮 [**Play Medieval RPG on Web**](https://lmalvarez13.github.io/medieval-rpg/)
 
+<p align="center">
+  <img src="./DevlogClips/MedievalRPG_GameClip.gif" width="400" height="300" />
+</p>
 
 ## About this project
 This project is an RPG Diablo-like game where the player will have to combat grumpy enemies who took a whole town as prisioners.
