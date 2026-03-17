@@ -6,7 +6,7 @@ Try the game live here:
 🎮 [**Play Medieval RPG on Web**](https://lmalvarez13.github.io/medieval-rpg/)
 
 <p align="center">
-  <img src="./DevlogClips/MedievalRPG_GameClip.gif" width="400" height="300" />
+  <img src="./DevlogClips/MedievalRPG_GameClip.gif" width="450" height="300" />
 </p>
 
 ## About this project
